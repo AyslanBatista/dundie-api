@@ -15,8 +15,12 @@ from dundie.auth import (
 )
 from dundie.config import settings
 
-ACCESS_TOKEN_EXPIRE_MINUTES = settings.security.access_token_expire_minutes  # pyright: ignore
-REFRESH_TOKEN_EXPIRE_MINUTES = settings.security.refresh_token_expire_minutes  # pyright: ignore
+ACCESS_TOKEN_EXPIRE_MINUTES = (
+    settings.security.access_token_expire_minutes
+)  # pyright: ignore
+REFRESH_TOKEN_EXPIRE_MINUTES = (
+    settings.security.refresh_token_expire_minutes
+)  # pyright: ignore
 
 router = APIRouter()
 
@@ -33,13 +37,17 @@ async def login_for_access_token(
             headers={"WWW-Authenticate": "Bearer"},
         )
 
-    access_token_expires = timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)  # pyright: ignore
+    access_token_expires = timedelta(
+        minutes=ACCESS_TOKEN_EXPIRE_MINUTES
+    )  # pyright: ignore
     access_token = create_access_token(
         data={"sub": user.username, "fresh": True},
         expires_delta=access_token_expires,
     )
 
-    refresh_token_expires = timedelta(minutes=REFRESH_TOKEN_EXPIRE_MINUTES)  # pyright: ignore
+    refresh_token_expires = timedelta(
+        minutes=REFRESH_TOKEN_EXPIRE_MINUTES
+    )  # pyright: ignore
     refresh_token = create_refresh_token(
         data={"sub": user.username}, expires_delta=refresh_token_expires
     )
@@ -55,13 +63,17 @@ async def login_for_access_token(
 async def refresh_token(form_data: RefreshToken):
     user = await validate_token(token=form_data.refresh_token)
 
-    access_token_expires = timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)  # pyright: ignore
+    access_token_expires = timedelta(
+        minutes=ACCESS_TOKEN_EXPIRE_MINUTES
+    )  # pyright: ignore
     access_token = create_access_token(
         data={"sub": user.username, "fresh": False},
         expires_delta=access_token_expires,
     )
 
-    refresh_token_expires = timedelta(minutes=REFRESH_TOKEN_EXPIRE_MINUTES)  # pyright: ignore
+    refresh_token_expires = timedelta(
+        minutes=REFRESH_TOKEN_EXPIRE_MINUTES
+    )  # pyright: ignore
     refresh_token = create_refresh_token(
         data={"sub": user.username}, expires_delta=refresh_token_expires
     )
