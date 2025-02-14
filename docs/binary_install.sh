@@ -13,12 +13,16 @@ for url in "${URLS[@]}"; do
   curl -L "$url" | tar xvz
 done
 
+ls
+
 # curl -L https://github.com/rust-lang/mdBook/releases/download/v0.4.25/mdbook-v0.4.25-x86_64-unknown-linux-gnu.tar.gz | tar xvz
 # cargo install mdbook-catppuccin
 # cargo install mdbook-toc
 # cargo install mdbook-pagetoc
 # cargo install mdbook-mermaid
 # cargo install mdbook-admonish
-# mdbook-admonish install --css-dir theme tutorial/
-cargo install mdbook-yml-header
-cargo install mdbook-epub
+# mdbook-admonish install --css-dir theme docs/
+
+# THE 2 below doesn't have binaries built
+# cargo install mdbook-yml-header
+# cargo install mdbook-epub

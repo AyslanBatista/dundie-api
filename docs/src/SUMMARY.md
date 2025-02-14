@@ -84,14 +84,15 @@
 
 # Tarefas Agendadas
 
-<!-- - [Task Queue](./45_task_queue.md) -->
+- [Task Queue](./45_task_queue.md)
 <!-- - [Emails agendados](./46_relatorios.md) -->
 <!-- - [Transações agendadas](./47_transacoes_agendadas.md) -->
 
 # Front-end
 
-<!-- - [Integrando Front-end](./48_front_end.md) -->
-<!-- - [Websockets](./49_websockets.md) -->
+- [Websockets](./49_websockets.md)
+- [Cors Middleware](./50_cors_middleware.md)
+- [Session Auth no Front-end](./51_front_end_session_auth.md)
 
 ---
 

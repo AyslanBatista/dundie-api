@@ -2,9 +2,10 @@
 
 from typing import Optional
 
-from sqlmodel import Field, SQLModel
-from dundie.security import HashedPassword
 from pydantic import BaseModel, root_validator
+from sqlmodel import Field, SQLModel
+
+from dundie.security import HashedPassword
 
 
 class User(SQLModel, table=True):

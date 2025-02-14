@@ -12,7 +12,7 @@ graph LR;
 
 Para iniciar a nossa **API** + o **Banco de dados** vamos precisar de um
 orquestrador de containers, em produção isso será feito com Kubernetes
-mas no ambiente de desenvolvimento podemos usar o **docker-compose**.
+mas no ambiente de desenvolvimento podemos usar o **docker compose**.
 
 No arquivo `docker-compose.yaml`
 
@@ -37,6 +37,7 @@ services:
     environment:
       DUNDIE_DB__uri: "postgresql://postgres:postgres@db:5432/${DUNDIE_DB:-dundie}"
       DUNDIE_DB__connect_args: "{}"
+      SQLALCHEMY_SILENCE_UBER_WARNING: 1
     volumes:
       - .:/home/app/api
     depends_on:
@@ -47,29 +48,35 @@ services:
     build: postgres
     image: dundie_postgres-13-alpine-multi-user
     volumes:
-      - $HOME/.postgres/dundie_db/data/postgresql:/var/lib/postgresql/data
+      - dundie_pg_data:/var/lib/postgresql/data
     ports:
       - "5432:5432"
     environment:
       - POSTGRES_DBS=dundie, dundie_test
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=postgres
+
+volumes:
+  dundie_pg_data:
 ```
 
 O próximo passo é estando na raiz do repositório executar:
 
 ```bash
-docker-compose up -d
+docker compose up -d
 ```
 ```admonish info
 Na primeira execução poderá demorar mais termpo pois as imagens serão construidas.
+```
+```admonish warning
+Se o comando `docker compose` não funcionar tente usar `docker-compose` (com um traço - )
 ```
 
 
 Para verificar os serviços que estão rodando:
 
 ```console
-$ docker-compose ps
+$ docker compose ps
        Name                     Command               State           Ports
     api_1             /bin/sh -c uvicorn dundie...     Up             8000
     db_1             docker-entrypoint.sh postgres     Up             5432
@@ -77,5 +84,5 @@ $ docker-compose ps
 
 
 ```admonish tip
-Os serviços ficarão em execução em segundo plano, se quiser manter o terminal aberto para acompanhar os logs pode omitir o `-d` ou então abrir um segundo terminal e executar `docker-compose logs --follow`
+Os serviços ficarão em execução em segundo plano, se quiser manter o terminal aberto para acompanhar os logs pode omitir o `-d` ou então abrir um segundo terminal e executar `docker compose logs --follow`
 ```

@@ -66,7 +66,7 @@ class TransactionResponse(BaseModel, extra="allow"):
 Podemos testar no shell com:
 
 ```console
-$ docker-compose exec api dundie shell
+$ docker compose exec api dundie shell
 Auto imports: ['settings', 'engine', 'select', 'session', 'User', 
                'Transaction', 'Balance', 'add_transaction']
 
@@ -95,6 +95,8 @@ from fastapi_pagination import Page, Params
 from fastapi_pagination.ext.sqlmodel import paginate
 from dundie.models import Transaction
 from dundie.models.serializers import TransactionResponse
+from sqlmodel import text
+from sqlalchemy.orm import aliased
 
 # No final do arquivo
 @router.get("/", response_model=Page[TransactionResponse])

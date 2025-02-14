@@ -1,9 +1,9 @@
 """Database connection"""
 
+from fastapi import Depends
 from sqlmodel import Session, create_engine
 
 from .config import settings
-from fastapi import Depends
 
 engine = create_engine(
     settings.db.uri,  # pyright: ignore
