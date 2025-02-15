@@ -4,7 +4,7 @@ from rich.table import Table
 from sqlmodel import Session, select
 
 from .config import settings
-from .db import engine
+from .db import SQLModel, engine
 from .models import User
 from .models.transaction import Balance, Transaction
 from .models.user import generate_username
@@ -118,3 +118,15 @@ def transaction(
         table.add_row(user.username, str(user_before), str(user.balance))
 
         Console().print(table)
+
+
+@main.command()
+def reset_db(
+    force: bool = typer.Option(
+        False, "--force", "-f", help="Run with no confirmation"
+    )
+):
+    """Resets the database tables"""
+    force = force or typer.confirm("Are you sure?")
+    if force:
+        SQLModel.metadata.drop_all(engine)
