@@ -6,7 +6,9 @@ from sqlmodel import Session, select
 from .config import settings
 from .db import engine
 from .models import User
+from .models.transaction import Balance, Transaction
 from .models.user import generate_username
+from .tasks.transaction import add_transaction
 
 main = typer.Typer(name="dundie CLI", add_completion=False)
 
@@ -20,6 +22,9 @@ def shell():
         "select": select,
         "session": Session(engine),
         "User": User,
+        "Transaction": Transaction,
+        "Balance": Balance,
+        "add_transaction": add_transaction,
     }
     typer.echo(f"Auto imports: {list(_vars.keys())}")
     try:
@@ -74,3 +79,42 @@ def create_user(
         session.refresh(user)
         typer.echo(f"created {user.username} user")
         return user
+
+
+@main.command()
+def transaction(
+    username: str,
+    value: int,
+):
+    """Adds specified value to the user"""
+
+    table = Table(title="Transaction")
+    fields = ["user", "before", "after"]
+    for header in fields:
+        table.add_column(header, style="magenta")
+
+    with Session(engine) as session:
+        from_user = session.exec(
+            select(User).where(User.username == "admin")
+        ).first()
+        if not from_user:
+            typer.echo("admin user not found")
+            exit(1)
+        user = session.exec(
+            select(User).where(User.username == username)
+        ).first()
+        if not user:
+            typer.echo(f"user {username} not found")
+            exit(1)
+
+        from_user_before = from_user.balance
+        user_before = user.balance
+        add_transaction(
+            user=user, from_user=from_user, session=session, value=value
+        )
+        table.add_row(
+            from_user.username, str(from_user_before), str(from_user.balance)
+        )
+        table.add_row(user.username, str(user_before), str(user.balance))
+
+        Console().print(table)
