@@ -5,6 +5,7 @@ from fastapi.encoders import jsonable_encoder
 from fastapi.responses import JSONResponse
 from pydantic import parse_obj_as
 from sqlalchemy.exc import IntegrityError
+from dundie.queue import queue
 from sqlmodel import Session, select
 
 from dundie.auth import (
@@ -136,11 +137,14 @@ async def change_password(
 
 @router.post("/pwd_reset_token/")
 async def send_password_reset_token(
-    *, email: str = Body(embed=True), background_tasks: BackgroundTasks
+    *,
+    email: str = Body(embed=True),
+    # background_tasks: BackgroundTasks
 ):
     """Sends an email with the token to reset password."""
 
-    background_tasks.add_task(try_to_send_pwd_reset_email, email=email)
+    # background_tasks.add_task(try_to_send_pwd_reset_email, email=email)
+    queue.enqueue(try_to_send_pwd_reset_email, email=email)
 
     return {
         "message": "If we found a user with that email, we sent a password reset token to it."
