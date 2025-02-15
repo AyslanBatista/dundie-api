@@ -1,12 +1,15 @@
 """User related data models"""
 
-from typing import Optional
+from typing import TYPE_CHECKING, Optional
 
 from fastapi import HTTPException, status
 from pydantic import BaseModel, root_validator
-from sqlmodel import Field, SQLModel
+from sqlmodel import Field, Relationship, SQLModel
 
 from dundie.security import HashedPassword, get_password_hash
+
+if TYPE_CHECKING:
+    from dundie.models.transaction import Balance, Transaction
 
 
 class User(SQLModel, table=True):
@@ -21,6 +24,34 @@ class User(SQLModel, table=True):
     name: str = Field(nullable=False)
     dept: str = Field(nullable=False)
     currency: str = Field(nullable=False)
+
+    # Populates a `.user` on `Transaction`
+    incomes: Optional[list["Transaction"]] = Relationship(
+        back_populates="user",
+        sa_relationship_kwargs={
+            "primaryjoin": 'User.id == Transaction.user_id'
+        },
+    )
+    # Populates a `.from_user` on `Transaction`
+    expenses: Optional[list["Transaction"]] = Relationship(
+        back_populates="from_user",
+        sa_relationship_kwargs={
+            "primaryjoin": 'User.id == Transaction.from_id'
+        },
+    )
+    # Populates a `.user` on `Balance`
+    _balance: Optional["Balance"] = Relationship(
+        back_populates="user", sa_relationship_kwargs={"lazy": "dynamic"}
+    )
+
+    @property
+    def balance(self) -> int:
+        """Returns the current balance of the user"""
+        if (
+            user_balance := self._balance.first()
+        ) is not None:  # pyright: ignore
+            return user_balance.value
+        return 0
 
     @property
     def superuser(self):
