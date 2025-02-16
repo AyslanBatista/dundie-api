@@ -10,6 +10,7 @@ services:
     environment:
       DUNDIE_DB__uri: "postgresql://postgres:postgres@db:5432/${DUNDIE_DB:-dundie}"
       DUNDIE_DB__connect_args: "{}"
+      SQLALCHEMY_SILENCE_UBER_WARNING: 1
     volumes:
       - .:/home/app/api
     depends_on: # Serviço api depende do dp
@@ -20,7 +21,7 @@ services:
     build: postgres
     image: dundie_postgres-13-alpine-multi-user
     volumes:
-      - $HOME/.postgres/dundie_db/data/postgresql:/var/lib/postgresql/data
+      - dundie_pg_data:/var/lib/postgresql/data
     ports:
       # ATENÇÃO: Mude para 5432: se precisar acessar via host
       - "5432:5432"
@@ -35,7 +36,7 @@ services:
     ports:
       - "6379:6379"
     volumes:
-      - $HOME/.redis/dundie_redis/data:/data
+      - dundie_redis_data:/data
 
   worker:
     build:
@@ -44,6 +45,7 @@ services:
     environment:
       DUNDIE_DB__uri: "postgresql://postgres:postgres@db:5432/${DUNDIE_DB:-dundie}"
       DUNDIE_DB__connect_args: "{}"
+      SQLALCHEMY_SILENCE_UBER_WARNING: 1
     volumes:
       - .:/home/app/api
     depends_on:
@@ -52,3 +54,14 @@ services:
     stdin_open: true
     tty: true
     command: rq worker --with-scheduler --url redis://redis:6379
+
+  ui:
+    image: nginx
+    ports:
+      - "8001:80"
+    volumes:
+      - ./ui:/usr/share/nginx/html
+
+volumes:
+  dundie_pg_data:
+  dundie_redis_data:

@@ -1,6 +1,7 @@
 from typing import TYPE_CHECKING, Optional
+from asyncio import sleep
 
-from fastapi import APIRouter, Body, Depends, HTTPException
+from fastapi import APIRouter, Body, Depends, HTTPException, WebSocket
 from fastapi_pagination import Page, Params
 from fastapi_pagination.ext.sqlmodel import paginate
 from sqlalchemy.orm import aliased
@@ -49,7 +50,7 @@ async def list_transactions(
     from_user: Optional[str] = None,
     order_by: Optional[str] = None,  # &order_by=date,value -date,-value
 ):
-    """Lists all transactions"""
+    """Lists all transactions - for websocket version apeend /ws at the end"""
     query = select(Transaction)
 
     # Optional filters
@@ -80,3 +81,29 @@ async def list_transactions(
         query = query.order_by(order_text)
 
     return paginate(query=query, session=session, params=params)
+
+
+@router.websocket("/ws")
+async def list_transactions_ws(
+    websocket: WebSocket, session: Session = ActiveSession
+):
+    await websocket.accept()
+    last = 0
+    while True:
+        # Read all transactions that have not been seen yet
+        new_transactions = session.exec(
+            select(Transaction).where(Transaction.id > last).order_by("id")
+        )
+        for transaction in new_transactions:
+            data = {
+                "to": transaction.user.name,
+                "from": transaction.from_user.name,
+                "value": transaction.value,
+            }
+            await websocket.send_json(data)
+
+            # set the last sent ID to avoid duplication
+            last = transaction.id
+
+            # Sleep 1 second (just to see better on UI)
+            await sleep(1)

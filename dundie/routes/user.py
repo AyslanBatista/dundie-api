@@ -1,11 +1,10 @@
 from typing import List
 
-from fastapi import APIRouter, BackgroundTasks, Body, HTTPException
+from fastapi import APIRouter, Body, HTTPException
 from fastapi.encoders import jsonable_encoder
 from fastapi.responses import JSONResponse
 from pydantic import parse_obj_as
 from sqlalchemy.exc import IntegrityError
-from dundie.queue import queue
 from sqlmodel import Session, select
 
 from dundie.auth import (
@@ -23,6 +22,7 @@ from dundie.models.user import (
     UserResponse,
     UserResponseWithBalance,
 )
+from dundie.queue import queue
 from dundie.tasks.user import try_to_send_pwd_reset_email
 
 router = APIRouter()

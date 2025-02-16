@@ -1,5 +1,6 @@
 from redis import Redis
 from rq import Queue
+
 from dundie.config import settings
 
 redis = Redis(
