@@ -65,7 +65,7 @@ pygments==2.18.0
     # via rich
 python-jose[cryptography]==3.3.0
     # via -r requirements.in
-python-multipart==0.0.9
+python-multipart==0.0.20
     # via -r requirements.in
 redis==5.0.8
     # via rq
