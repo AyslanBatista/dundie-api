@@ -1,6 +1,7 @@
 from datetime import timedelta
 
-from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi import APIRouter, Depends, Form, HTTPException, Request, status
+from fastapi.responses import Response
 from fastapi.security import OAuth2PasswordRequestForm
 
 from dundie.auth import (
@@ -14,6 +15,7 @@ from dundie.auth import (
     validate_token,
 )
 from dundie.config import settings
+from dundie.session import session_store, set_session
 
 ACCESS_TOKEN_EXPIRE_MINUTES = (
     settings.security.access_token_expire_minutes
@@ -83,3 +85,30 @@ async def refresh_token(form_data: RefreshToken):
         "refresh_token": refresh_token,
         "token_type": "bearer",
     }
+
+
+@router.post("/login")
+async def session_login(
+    response: Response,
+    username: str = Form(),
+    password: str = Form(),
+):
+    """Cookie Based Session Auth Login"""
+    user = authenticate_user(get_user, username, password)
+    if not user or not isinstance(user, User):
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Incorrect username or password",
+        )
+    session_id = set_session(user.username)
+    response.set_cookie(key="session_id", value=session_id, domain="localhost")
+    return {"status": "logged in"}
+
+
+@router.post("/logout")
+async def session_logout(request: Request, response: Response):
+    """Cookie Based Session Auth Logout"""
+    if session_id := request.cookies.get("session_id"):
+        response.delete_cookie(key="session_id")
+        session_store.delete(session_id)
+    return {"status": "logged out"}
