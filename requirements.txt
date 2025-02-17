@@ -19,7 +19,7 @@ click==8.1.7
     #   uvicorn
 cryptography==43.0.1
     # via python-jose
-dynaconf==3.2.6
+dynaconf==3.2.10
     # via -r requirements.in
 ecdsa==0.19.0
     # via python-jose
