@@ -1,36 +1,36 @@
-name: GH Pages Deploy
+#name: GH Pages Deploy
 
-on:
-  push:
-    branches: [main]
+#on:
+#  push:
+#    branches: [main]
+#
+#  pull_request:
+#    branches: [main]
 
-  pull_request:
-    branches: [main]
-
-jobs:
-  build-deploy:
-    runs-on: ubuntu-latest
-
-    steps:
-      - name: Checkout 🛎
-        uses: actions/checkout@v2
-
-      - name: Install dependencies 🔧
-        run: make install
-
-      - name: Add paths
-        env:
-          ACTIONS_ALLOW_UNSECURE_COMMANDS: true
-        run: echo "::add-path::$GITHUB_WORKSPACE/docs"
-
-      - name: Build 🏗️
-        run: make build
-
-      - name: 'Get Previous tag'
-        id: previoustag
-        uses: "WyriHaximus/github-action-get-previous-tag@v1"
-        with:
-          fallback: v1.0 # Optional fallback tag to use when no tag can be found
+#jobs:
+#  build-deploy:
+#    runs-on: ubuntu-latest
+#
+#    steps:
+#      - name: Checkout 🛎
+#        uses: actions/checkout@v2
+#
+#      - name: Install dependencies 🔧
+#        run: make install
+#
+#      - name: Add paths
+#        env:
+#          ACTIONS_ALLOW_UNSECURE_COMMANDS: true
+#        run: echo "::add-path::$GITHUB_WORKSPACE/docs"
+#
+#      - name: Build 🏗️
+#        run: make build
+#
+#      - name: 'Get Previous tag'
+#        id: previoustag
+#        uses: "WyriHaximus/github-action-get-previous-tag@v1"
+#        with:
+#          fallback: v1.0 # Optional fallback tag to use when no tag can be found
 
       # # ePub upload as a Github release asset
       # - name: Create Release
@@ -45,16 +45,16 @@ jobs:
       #     draft: false
       #     prerelease: false
 
-      - uses: ncipollo/release-action@v1
-        with:
-          allowUpdates: true
-          omitBody: true
-          omitBodyDuringUpdate: true
-          replacesArtifacts: true
-          removeArtifacts: true
-          draft: false
-          tag: ${{ steps.previoustag.outputs.tag }}
-          artifacts: "./docs/book/epub/Dundie API - Curso Python LINUXtips.epub"
+#      - uses: ncipollo/release-action@v1
+#        with:
+#          allowUpdates: true
+#          omitBody: true
+#          omitBodyDuringUpdate: true
+#          replacesArtifacts: true
+#          removeArtifacts: true
+#          draft: false
+#          tag: ${{ steps.previoustag.outputs.tag }}
+#          artifacts: "./docs/book/epub/Dundie API - Curso Python LINUXtips.epub"
 
       # - name: Upload epub to release
       #   id: upload-release-asset
@@ -67,9 +67,9 @@ jobs:
       #     asset_name: dundie-api-curso-python-linuxtips-bruno-rocha.epub
       #     asset_content_type: application/epub+zip
 
-      - name: Deploy to GitHub Pages 🚀
-        if: ${{ github.event_name != 'pull_request' }}
-        uses: peaceiris/actions-gh-pages@v3
-        with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: ./docs/book/html
+#      - name: Deploy to GitHub Pages 🚀
+#        if: ${{ github.event_name != 'pull_request' }}
+#        uses: peaceiris/actions-gh-pages@v3
+#        with:
+#          github_token: ${{ secrets.GITHUB_TOKEN }}
+#          publish_dir: ./docs/book/html
