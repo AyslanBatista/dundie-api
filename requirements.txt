@@ -23,7 +23,7 @@ dynaconf==3.2.6
     # via -r requirements.in
 ecdsa==0.19.0
     # via python-jose
-fastapi==0.114.1
+fastapi==0.115.11
     # via -r requirements.in
 fastapi-pagination==0.12.27
     # via -r requirements.in
@@ -92,7 +92,7 @@ sqlalchemy2-stubs==0.0.2a38
     # via sqlmodel
 sqlmodel==0.0.11
     # via -r requirements.in
-starlette==0.38.5
+starlette==0.46.1
     # via fastapi
 typer==0.12.5
     # via -r requirements.in
