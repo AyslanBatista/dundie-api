@@ -106,5 +106,5 @@ typing-extensions==4.12.2
     #   typer
 uvicorn==0.30.6
     # via -r requirements.in
-websockets==13.0.1
+websockets==15.0.1
     # via -r requirements.in
